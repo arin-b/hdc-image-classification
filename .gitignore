@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.env/
+
+# Data
+data/
+*.jpg
+*.png
+
+# Outputs
+*.json
+*.png
+
+# OS
+.DS_Store
+

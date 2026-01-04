@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # MQTT Broker
+  mqtt:
+    image: eclipse-mosquitto:2.0
+    container_name: hdc_mqtt
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - hdc-network
+
+  # Aggregator
+  aggregator:
+    build: .
+    container_name: hdc_aggregator
+    command: python federated_aggregator.py
+    environment:
+      - MQTT_HOST=mqtt
+      - MQTT_PORT=1883
+    volumes:
+      - ./hdc_dtaset:/app/test_data
+    depends_on:
+      - mqtt
+    networks:
+      - hdc-network
+
+  # Client for bottle class
+  client_bottle:
+    build: .
+    container_name: hdc_client_bottle
+    command: python federated_train.py
+    environment:
+      - CLIENT_ID=0
+      - CLASS_NAME=bottle
+      - MQTT_HOST=mqtt
+      - MQTT_PORT=1883
+    volumes:
+      - ./hdc_dtaset/bottle:/app/data/bottle
+    depends_on:
+      - mqtt
+    networks:
+      - hdc-network
+
+  # Client for mouse class
+  client_mouse:
+    build: .
+    container_name: hdc_client_mouse
+    command: python federated_train.py
+    environment:
+      - CLIENT_ID=1
+      - CLASS_NAME=mouse
+      - MQTT_HOST=mqtt
+      - MQTT_PORT=1883
+    volumes:
+      - ./hdc_dtaset/mouse:/app/data/mouse
+    depends_on:
+      - mqtt
+    networks:
+      - hdc-network
+
+  # Client for mobile class
+  client_mobile:
+    build: .
+    container_name: hdc_client_mobile
+    command: python federated_train.py
+    environment:
+      - CLIENT_ID=2
+      - CLASS_NAME=mobile
+      - MQTT_HOST=mqtt
+      - MQTT_PORT=1883
+    volumes:
+      - ./hdc_dtaset/mobile:/app/data/mobile
+    depends_on:
+      - mqtt
+    networks:
+      - hdc-network
+
+  # Client for sharpner class
+  client_sharpner:
+    build: .
+    container_name: hdc_client_sharpner
+    command: python federated_train.py
+    environment:
+      - CLIENT_ID=3
+      - CLASS_NAME=sharpner
+      - MQTT_HOST=mqtt
+      - MQTT_PORT=1883
+    volumes:
+      - ./hdc_dtaset/sharpner:/app/data/sharpner
+    depends_on:
+      - mqtt
+    networks:
+      - hdc-network
+
+networks:
+  hdc-network:
+    driver: bridge

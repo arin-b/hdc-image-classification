@@ -1,0 +1,45 @@
+dataset_id: "hdc_custom"
+algorithm: "HDC"
+num_clients: 4
+num_rounds: 1
+round_duration: 300  # 5 minutes
+
+# Client configuration
+client_config:
+  memory_limit: "512m"
+  cpu_limit: 1
+  classes:
+    - "bottle"
+    - "mouse" 
+    - "mobile"
+    - "sharpner"
+
+# HDC specific parameters
+hdc_config:
+  hd_dimension: 4096
+  feature_dimension: 128
+  random_seed: 123
+  projection_type: "bipolar"
+
+# MQTT configuration
+mqtt:
+  host: "10.0.9.100"  # Update with your MQTT IP
+  port: 1883
+  topics:
+    training_start: "hdc/start_training"
+    training_complete: "hdc/training_complete"
+    aggregation: "hdc/aggregate"
+    centroid_update: "hdc/centroid_update"
+    inference: "hdc/inference_request"
+
+# Data configuration
+data_config:
+  train_split: 0.8
+  test_split: 0.2
+  image_size: [224, 224]
+  batch_size: 1
+
+# Logging
+logging:
+  level: "INFO"
+  file: "hdc_federated.log"
